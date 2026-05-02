@@ -18,8 +18,15 @@ from .losses import normal_kl, discretized_gaussian_log_likelihood
 from torchvision.utils import save_image
 from datetime import date, datetime
 from loss_functions.counting_loss import counting_loss_torch
-from loss_functions.topoloss_individual_cell import TopoLossMSE2D
-from loss_functions.topoloss_total_cell import TopoLossMSE2D_TotalCell
+
+try:
+    from loss_functions.topoloss_individual_cell import TopoLossMSE2D
+    from loss_functions.topoloss_total_cell import TopoLossMSE2D_TotalCell
+    _TOPO_IMPORT_ERROR = None
+except Exception as exc:  # pragma: no cover - only used when optional deps are absent.
+    TopoLossMSE2D = None
+    TopoLossMSE2D_TotalCell = None
+    _TOPO_IMPORT_ERROR = exc
 
 def get_named_beta_schedule(schedule_name, num_diffusion_timesteps):
     """
@@ -855,6 +862,8 @@ class GaussianDiffusion:
 
             # modifications
             if loss_type in ["all_with_both_topo", "topo"]:
+                if TopoLossMSE2D is None or TopoLossMSE2D_TotalCell is None:
+                    raise ImportError("Topological loss dependencies are not installed") from _TOPO_IMPORT_ERROR
                 # Calculate Topological loss
                 topo_loss = TopoLossMSE2D(topo_weight=topo_loss_weight, topo_window=100)
                 weighted_topo_loss, original_topo_loss = topo_loss(predicted_clean, x_start)
@@ -867,6 +876,8 @@ class GaussianDiffusion:
                 terms["original_topo_total"] = original_topo_loss_total
             
             if loss_type in ["all_with_intra_topo", "topo"]:
+                if TopoLossMSE2D is None:
+                    raise ImportError("Topological loss dependencies are not installed") from _TOPO_IMPORT_ERROR
                 # Calculate Intra Topological loss
                 topo_loss = TopoLossMSE2D(topo_weight=topo_loss_weight, topo_window=100)
                 weighted_topo_loss, original_topo_loss = topo_loss(predicted_clean, x_start)
