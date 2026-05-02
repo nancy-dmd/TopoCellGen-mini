@@ -63,6 +63,10 @@ python3 eval_TopoFD.py
 - BRCA-M2C dataset: You can assess the data from [official website](https://github.com/TopoXLab/Dataset-BRCA-M2C).
 - Lizard dataset: You can assess the data from [official website](https://www.kaggle.com/datasets/aadimator/lizard-dataset/data)
 
+# Reproduction and Learning Notes
+- English minimal reproduction report: [REPRODUCTION_REPORT.md](./REPRODUCTION_REPORT.md)
+- Chinese beginner-friendly reproduction report: [复现报告_中文入门版.md](./复现报告_中文入门版.md)
+
 
 # Citation
 If you found this work useful, please consider citing our paper:
